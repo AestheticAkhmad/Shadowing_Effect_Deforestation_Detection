@@ -20,28 +20,29 @@ class DeforestationApplication:
         style.configure('TFrame', background='white')
 
         # Navigation bar
-        self.nav_bar = ttk.Frame(self.window, width=1920, height=70, relief=tk.FLAT)
-        self.nav_bar.propagate(True)
+        self.nav_bar = ttk.Frame(self.window, height=70, relief=tk.FLAT)
+        #self.nav_bar.propagate(True)
         self.InitNavBar()
+        self.nav_bar.grid(column=0, row=0, columnspan=3, sticky="ew")
 
         # Introduction page
-        self.intro_frame = ttk.Frame(self.window, width=1920, height=1010, relief=tk.FLAT)
-        self.intro_frame.propagate(False)
-        self.intro_frame.grid_propagate(False)
+        self.intro_frame = ttk.Frame(self.window, relief=tk.FLAT)
+        #self.intro_frame.propagate(False)
+        #self.intro_frame.grid_propagate(False)
         self.InitIntroPage()
         self.intro_frame.grid(column=0, row=1, sticky="nsew")
         
         # Data insertion page
-        self.data_insertion_frame = ttk.Frame(self.window, width=1920, height=1010, relief=tk.FLAT)
-        self.data_insertion_frame.propagate(False)
-        self.data_insertion_frame.grid_propagate(False)
+        self.data_insertion_frame = ttk.Frame(self.window, relief=tk.FLAT)
+        #self.data_insertion_frame.propagate(False)
+        #self.data_insertion_frame.grid_propagate(False)
         self.InitDataInsertionPage()
         self.data_insertion_frame.grid(column=0, row=1, sticky="nsew")
 
         # Results page
-        self.results_frame = ttk.Frame(self.window, width=1920, height=1010, relief=tk.FLAT)
-        self.results_frame.propagate(False)
-        self.results_frame.grid_propagate(False)
+        self.results_frame = ttk.Frame(self.window, relief=tk.FLAT)
+        #self.results_frame.propagate(False)
+        #self.results_frame.grid_propagate(False)
         self.InitResultsPage()
         self.results_frame.grid(column=0, row=1, sticky="nsew")
 
@@ -107,12 +108,10 @@ class DeforestationApplication:
         results_button.config(activeforeground=active_foreground_color)
         results_button.grid(column=2, row=0, sticky="nsew", padx=(50,10), pady=(5, 5))
 
-        self.nav_bar.grid(column=0, row=0, sticky="nsew")
-
     def InitIntroPage(self):
         # Side menu frame
         side_menu = ttk.Frame(self.intro_frame, width=420, height=1010, relief=tk.FLAT)
-        side_menu.propagate(False)
+        #side_menu.propagate(False)
         side_menu.grid(column=0, row=0, sticky="nsew")
 
         # Colors
