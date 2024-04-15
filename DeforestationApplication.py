@@ -23,7 +23,11 @@ class DeforestationApplication:
         self.nav_bar = ttk.Frame(self.window, height=70, relief=tk.FLAT)
         #self.nav_bar.propagate(True)
         self.InitNavBar()
-        self.nav_bar.grid(column=0, row=0, columnspan=3, sticky="ew")
+        self.nav_bar.grid(column=0, row=0, columnspan=3, sticky="nsew")
+        self.nav_bar.grid_rowconfigure(0, weight=1)
+        self.nav_bar.grid_columnconfigure(0, weight=1)
+        self.nav_bar.grid_columnconfigure(1, weight=1)
+        self.nav_bar.grid_columnconfigure(2, weight=1)
 
         # Introduction page
         self.intro_frame = ttk.Frame(self.window, relief=tk.FLAT)
@@ -31,6 +35,10 @@ class DeforestationApplication:
         #self.intro_frame.grid_propagate(False)
         self.InitIntroPage()
         self.intro_frame.grid(column=0, row=1, sticky="nsew")
+        self.intro_frame.grid_rowconfigure(0, weight=1)
+        self.intro_frame.grid_columnconfigure(0, weight=1)
+        self.intro_frame.grid_columnconfigure(1, weight=1)
+        
         
         # Data insertion page
         self.data_insertion_frame = ttk.Frame(self.window, relief=tk.FLAT)
@@ -45,6 +53,10 @@ class DeforestationApplication:
         #self.results_frame.grid_propagate(False)
         self.InitResultsPage()
         self.results_frame.grid(column=0, row=1, sticky="nsew")
+
+        self.window.grid_rowconfigure(0, weight=1)
+        self.window.grid_rowconfigure(1, weight=1)
+        self.window.grid_columnconfigure(0, weight=1)
 
         # Start application
         self.intro_frame.tkraise()
@@ -64,7 +76,7 @@ class DeforestationApplication:
         # Intro button
         intro_button = Button(self.nav_bar, 
                                    text='Introduction', 
-                                   width=565, 
+                                   #width=565, 
                                    height=70, 
                                    relief='solid',
                                    borderless=1,
@@ -76,12 +88,12 @@ class DeforestationApplication:
         intro_button.config(activeforeground=active_foreground_color)
         intro_button.config(highlightbackground=background_color)
         intro_button.config(highlightcolor=highlight_color)
-        intro_button.grid(column=0, row=0, sticky="nsew", padx=(10,50), pady=(5, 5))
+        intro_button.grid(column=0, row=0, sticky="ew", padx=(10,10), pady=(5, 5))
 
         # Data button
         data_insertion_button = Button(self.nav_bar, 
                                     text='Data Insertion', 
-                                    width=565, 
+                                    #width=565, 
                                     height=70, 
                                     relief='solid',
                                     borderless=1,
@@ -91,12 +103,12 @@ class DeforestationApplication:
         data_insertion_button.config(fg=foreground_color)
         data_insertion_button.config(activebackground=active_background_color)
         data_insertion_button.config(activeforeground=active_foreground_color)
-        data_insertion_button.grid(column=1, row=0, sticky="nsew", padx=(50,50), pady=(5, 5))
+        data_insertion_button.grid(column=1, row=0, sticky="ew", padx=(10,10), pady=(5, 5))
 
         # Results button
         results_button = Button(self.nav_bar, 
                                     text='Results', 
-                                    width=565, 
+                                    #width=565, 
                                     height=70, 
                                     relief='solid',
                                     borderless=1,
@@ -106,11 +118,18 @@ class DeforestationApplication:
         results_button.config(fg=foreground_color)
         results_button.config(activebackground=active_background_color)
         results_button.config(activeforeground=active_foreground_color)
-        results_button.grid(column=2, row=0, sticky="nsew", padx=(50,10), pady=(5, 5))
+        results_button.grid(column=2, row=0, sticky="ew", padx=(10,10), pady=(5, 5))
+
+
 
     def InitIntroPage(self):
         # Side menu frame
-        side_menu = ttk.Frame(self.intro_frame, width=420, height=1010, relief=tk.FLAT)
+        side_menu = ttk.Frame(self.intro_frame, relief=tk.FLAT)
+        side_menu.grid_columnconfigure(0, weight=1)
+        side_menu.grid_rowconfigure(0, weight=1)
+        side_menu.grid_rowconfigure(1, weight=1)
+        side_menu.grid_rowconfigure(2, weight=1)
+        side_menu.grid_rowconfigure(3, weight=1)
         #side_menu.propagate(False)
         side_menu.grid(column=0, row=0, sticky="nsew")
 
@@ -124,7 +143,7 @@ class DeforestationApplication:
         # Side menu buttons
         tool_usage_button = Button(side_menu, 
                                    text='How to use the tool', 
-                                   width=420, 
+                                   #width=420, 
                                    height=70, 
                                    relief='solid',
                                    borderless=1)
@@ -135,12 +154,12 @@ class DeforestationApplication:
         tool_usage_button.config(activeforeground=active_foreground_color)
         tool_usage_button.config(highlightbackground=background_color)
         tool_usage_button.config(highlightcolor=highlight_color)
-        tool_usage_button.grid(column=0, row=0, sticky="nsew", padx=(10,10), pady=(10, 20))
+        tool_usage_button.grid(column=0, row=0, sticky="ew", padx=(10,10), pady=(10, 20))
 
         # # Data button
         algo_button = Button(side_menu, 
                                    text='Algorithm description', 
-                                   width=420, 
+                                   #width=420, 
                                    height=70, 
                                    relief='solid',
                                    borderless=1)
@@ -151,12 +170,12 @@ class DeforestationApplication:
         algo_button.config(activeforeground=active_foreground_color)
         algo_button.config(highlightbackground=background_color)
         algo_button.config(highlightcolor=highlight_color)
-        algo_button.grid(column=0, row=1, sticky="nsew", padx=(10,10), pady=(0, 20))
+        algo_button.grid(column=0, row=1, sticky="ew", padx=(10,10), pady=(0, 20))
 
         # # Results button
         about_button = Button(side_menu, 
                                    text='About', 
-                                   width=420, 
+                                   #width=420, 
                                    height=70, 
                                    relief='solid',
                                    borderless=1)
@@ -167,11 +186,11 @@ class DeforestationApplication:
         about_button.config(activeforeground=active_foreground_color)
         about_button.config(highlightbackground=background_color)
         about_button.config(highlightcolor=highlight_color)
-        about_button.grid(column=0, row=2, sticky="nsew", padx=(10,10), pady=(0, 20))
+        about_button.grid(column=0, row=2, sticky="ew", padx=(10,10), pady=(0, 20))
 
         exit_button = Button(side_menu, 
                                    text='Exit', 
-                                   width=420, 
+                                   #width=420, 
                                    height=70, 
                                    relief='solid',
                                    borderless=1)
@@ -182,7 +201,7 @@ class DeforestationApplication:
         exit_button.config(activeforeground=active_foreground_color)
         exit_button.config(highlightbackground=background_color)
         exit_button.config(highlightcolor=highlight_color)
-        exit_button.grid(column=0, row=3, sticky="nsew", padx=(10,10), pady=(600, 10))
+        exit_button.grid(column=0, row=3, sticky="ew", padx=(10,10), pady=(10, 10))
 
         # Text information on the right
         text_info = tk.Text(self.intro_frame, 
@@ -190,8 +209,9 @@ class DeforestationApplication:
                             font=('Arial', 14), 
                             state='disabled', 
                             bg="lightgrey",
-                            width=1420,
-                            height=970)
+                            #width=1420,
+                            #height=970)
+        )
         text_info.insert("end", "This is editable text.\n", "normal")
         text_info.grid(column=1, row=0, sticky='nsew', padx=(10,10), pady=(10, 10))
 
