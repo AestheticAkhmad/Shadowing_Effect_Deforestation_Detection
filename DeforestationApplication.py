@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from tkmacosx import Button
+from tkcalendar import Calendar
 
 class DeforestationApplication:
     def __init__(self) -> None:
@@ -18,6 +19,9 @@ class DeforestationApplication:
 
         style = ttk.Style()
         style.configure('TFrame', background='white')
+
+        # All entries
+        self.entries = list()
 
         # Navigation bar
         self.nav_bar = ttk.Frame(self.window, height=70, relief=tk.FLAT)
@@ -46,6 +50,10 @@ class DeforestationApplication:
         #self.data_insertion_frame.grid_propagate(False)
         self.InitDataInsertionPage()
         self.data_insertion_frame.grid(column=0, row=1, sticky="nsew")
+        self.data_insertion_frame.grid_rowconfigure(0, weight=1)
+        self.data_insertion_frame.grid_columnconfigure(0, weight=1)
+        self.data_insertion_frame.grid_columnconfigure(1, weight=1)
+        self.data_insertion_frame.grid_columnconfigure(2, weight=1)
 
         # Results page
         self.results_frame = ttk.Frame(self.window, relief=tk.FLAT)
@@ -57,6 +65,8 @@ class DeforestationApplication:
         self.window.grid_rowconfigure(0, weight=1)
         self.window.grid_rowconfigure(1, weight=1)
         self.window.grid_columnconfigure(0, weight=1)
+
+        
 
         # Start application
         self.intro_frame.tkraise()
@@ -75,7 +85,7 @@ class DeforestationApplication:
 
         # Intro button
         intro_button = Button(self.nav_bar, 
-                                   text='Introduction', 
+                                   text='Main Menu', 
                                    #width=565, 
                                    height=70, 
                                    relief='solid',
@@ -121,10 +131,9 @@ class DeforestationApplication:
         results_button.grid(column=2, row=0, sticky="ew", padx=(10,10), pady=(5, 5))
 
 
-
     def InitIntroPage(self):
         # Side menu frame
-        side_menu = ttk.Frame(self.intro_frame, relief=tk.FLAT)
+        side_menu = ttk.Frame(self.intro_frame, width=300, relief=tk.FLAT)
         side_menu.grid_columnconfigure(0, weight=1)
         side_menu.grid_rowconfigure(0, weight=1)
         side_menu.grid_rowconfigure(1, weight=1)
@@ -216,10 +225,224 @@ class DeforestationApplication:
         text_info.grid(column=1, row=0, sticky='nsew', padx=(10,10), pady=(10, 10))
 
     def InitDataInsertionPage(self):
-        pass
+        # Dates column (left side)
+        self.InitDataInsertionPageFirstColumn()
+
+        # ROI column (middle)
+        self.InitDataInsertionPageSecondColumn()
+
+        # Console column (right side)
+        self.InitDataInsertionPageThirdColumn()
+
+
 
     def InitResultsPage(self):
         pass
+    
+    def InitDataInsertionPageThirdColumn(self):
+        # 2nd column frame
+        console_frame = ttk.Frame(self.data_insertion_frame, relief=tk.FLAT)
+        console_frame.grid_columnconfigure(0, weight=1)
+        console_frame.grid_rowconfigure(0, weight=1)
+        console_frame.grid_rowconfigure(1, weight=1)
+
+        info_label = tk.Label(console_frame, 
+                               text="Algorithm progress info:",
+                               font=('Arial', 20, 'bold'))
+        info_label.grid(column=0, row=0, sticky="nsew", padx=(10,10), pady=(10,10))
+
+        console_info = tk.Text(console_frame, 
+                        wrap='word', 
+                        font=('Arial', 14), 
+                        state='disabled', 
+                        bg="lightgrey",
+        )
+        console_info.insert("end", "This is editable text.\n", "normal")
+        console_info.grid(column=0, row=1, sticky='nsew', padx=(10,10), pady=(10, 10))
+
+        console_frame.grid(column=2, row=0, sticky='nsew')
+
+    def InitDataInsertionPageSecondColumn(self):
+        # 2nd column frame
+        roi_frame = ttk.Frame(self.data_insertion_frame, relief=tk.FLAT)
+        roi_frame.grid_columnconfigure(0, weight=1)
+        roi_frame.grid_rowconfigure(0, weight=1)
+        roi_frame.grid_rowconfigure(1, weight=1)
+        roi_frame.grid_rowconfigure(2, weight=1)
+        roi_frame.grid_rowconfigure(3, weight=1)
+        roi_frame.grid_rowconfigure(4, weight=1)
+        roi_frame.grid_rowconfigure(5, weight=1)
+
+        dates_label = tk.Label(roi_frame, 
+                               text="Enter the coordinates \nfor the region of interest:",
+                               font=('Arial', 20, 'bold'))
+        dates_label.grid(column=0, row=0, sticky="nsew", padx=(10,10), pady=(10,10))
+
+        # West frame
+        west_frame = ttk.Frame(roi_frame, relief=tk.FLAT)
+        west_frame.grid_columnconfigure(0, weight=1)
+        west_frame.grid_columnconfigure(1, weight=1)
+        west_frame.grid(column=0, row=1, sticky="nsew")
+
+        west_label = tk.Label(west_frame,
+                                   text="West:",
+                                   font=('Arial', 18, 'bold'))
+        west_label.grid(column=0, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        
+        west_entry = tk.Entry(west_frame,
+                                   font=('Arial', 18, 'bold'))
+        west_entry.grid(column=1, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        self.entries.append(west_entry)
+
+        # South frame
+        south_frame = ttk.Frame(roi_frame, relief=tk.FLAT)
+        south_frame.grid_columnconfigure(0, weight=1)
+        south_frame.grid_columnconfigure(1, weight=1)
+        south_frame.grid(column=0, row=2, sticky="nsew")
+
+        south_label = tk.Label(south_frame,
+                                   text="South:",
+                                   font=('Arial', 18, 'bold'))
+        south_label.grid(column=0, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        
+        south_entry = tk.Entry(south_frame,
+                                   font=('Arial', 18, 'bold'))
+        south_entry.grid(column=1, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        self.entries.append(south_entry)
+
+        # East frame
+        east_frame = ttk.Frame(roi_frame, relief=tk.FLAT)
+        east_frame.grid_columnconfigure(0, weight=1)
+        east_frame.grid_columnconfigure(1, weight=1)
+        east_frame.grid(column=0, row=3, sticky="nsew")
+
+        east_label = tk.Label(east_frame,
+                                   text="East:",
+                                   font=('Arial', 18, 'bold'))
+        east_label.grid(column=0, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        
+        east_entry = tk.Entry(east_frame,
+                                   font=('Arial', 18, 'bold'))
+        east_entry.grid(column=1, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        self.entries.append(east_entry)
+
+        # North frame
+        north_frame = ttk.Frame(roi_frame, relief=tk.FLAT)
+        north_frame.grid_columnconfigure(0, weight=1)
+        north_frame.grid_columnconfigure(1, weight=1)
+        north_frame.grid(column=0, row=4, sticky="nsew")
+
+        north_label = tk.Label(north_frame,
+                                   text="North:",
+                                   font=('Arial', 18, 'bold'))
+        north_label.grid(column=0, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        
+        north_entry = tk.Entry(north_frame,
+                                   font=('Arial', 18, 'bold'))
+        north_entry.grid(column=1, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        self.entries.append(north_entry)
+
+        # Clear all fields Button
+        # Colors
+        background_color = '#F45C51'
+        active_background_color = '#F46F65'
+        foreground_color = '#000000'
+        active_foreground_color = '#000000'
+        highlight_color = '#5BFF9E'
+
+        clear_button = Button(roi_frame, 
+                                   text='Clear all fields', 
+                                   width=300, 
+                                   height=70, 
+                                   relief='solid',
+                                   borderless=1,
+                                   command=self.ClearAllFields)
+        clear_button.config(font=('Arial', 20, 'bold'))
+        clear_button.config(bg=background_color)
+        clear_button.config(fg=foreground_color)
+        clear_button.config(activebackground=active_background_color)
+        clear_button.config(activeforeground=active_foreground_color)
+        clear_button.config(highlightbackground=background_color)
+        clear_button.config(highlightcolor=highlight_color)
+        clear_button.grid(column=0, row=5, sticky="ew", padx=(10,10), pady=(10, 10))
+
+        roi_frame.grid(column=1, row=0, sticky="nsew")
+
+    def ClearAllFields(self):
+        for entry in self.entries:
+            entry.delete(0, tk.END)
+
+
+    def InitDataInsertionPageFirstColumn(self):
+        # 1st column frame
+        dates_frame = ttk.Frame(self.data_insertion_frame, relief=tk.FLAT)
+        dates_frame.grid_columnconfigure(0, weight=1)
+        dates_frame.grid_rowconfigure(0, weight=1)
+        dates_frame.grid_rowconfigure(1, weight=1)
+        dates_frame.grid_rowconfigure(2, weight=1)
+        dates_frame.grid_rowconfigure(3, weight=1)
+
+        dates_label = tk.Label(dates_frame, 
+                               text="Enter the dates for which \nto observe deforestation:",
+                               font=('Arial', 20, 'bold'))
+        dates_label.grid(column=0, row=0, sticky="nsew", padx=(10,10), pady=(10,10))
+
+        # Date from
+        date_from_frame = ttk.Frame(dates_frame, relief=tk.FLAT)
+        date_from_frame.grid_columnconfigure(0, weight=1)
+        date_from_frame.grid_columnconfigure(1, weight=1)
+        date_from_frame.grid(column=0, row=1, sticky="nsew")
+
+        date_from_label = tk.Label(date_from_frame,
+                                   text="Date from:\nYYYY-MM-DD",
+                                   font=('Arial', 18, 'bold'))
+        date_from_label.grid(column=0, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        
+        date_from_entry = tk.Entry(date_from_frame,
+                                   font=('Arial', 18, 'bold'))
+        date_from_entry.grid(column=1, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        self.entries.append(date_from_entry)
+
+        # Date to
+        date_to_frame = ttk.Frame(dates_frame, relief=tk.FLAT)
+        date_to_frame.grid_columnconfigure(0, weight=1)
+        date_to_frame.grid_columnconfigure(1, weight=1)
+        date_to_frame.grid(column=0, row=2, sticky="nsew")
+
+        date_to_label = tk.Label(date_to_frame,
+                                   text="Date to:\nYYYY-MM-DD",
+                                   font=('Arial', 18, 'bold'))
+        date_to_label.grid(column=0, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        
+        date_to_entry = tk.Entry(date_to_frame,
+                                   font=('Arial', 18, 'bold'))
+        date_to_entry.grid(column=1, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        self.entries.append(date_to_entry)
+
+        # Start Button
+        # Colors
+        background_color = '#BFACD6'
+        active_background_color = '#C9BCDB'
+        foreground_color = '#000000'
+        active_foreground_color = '#000000'
+        highlight_color = '#5BFF9E'
+
+        start_button = Button(dates_frame, 
+                                   text='Start', 
+                                   width=300, 
+                                   height=70, 
+                                   relief='solid',
+                                   borderless=1)
+        start_button.config(font=('Arial', 20, 'bold'))
+        start_button.config(bg=background_color)
+        start_button.config(fg=foreground_color)
+        start_button.config(activebackground=active_background_color)
+        start_button.config(activeforeground=active_foreground_color)
+        start_button.config(highlightbackground=background_color)
+        start_button.config(highlightcolor=highlight_color)
+        start_button.grid(column=0, row=3, sticky="ew", padx=(10,10), pady=(10, 10))
+
+        dates_frame.grid(column=0, row=0, sticky="nsew")
 
     def plot_on_frame(frame):
         # Create a sample plot
