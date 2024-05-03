@@ -11,60 +11,71 @@ class DeforestationApplication:
     def __init__(self) -> None:
         # Main window
         self.window = tk.Tk()
-        #self.window.geometry('1920x1080')
-        self.window.attributes('-fullscreen', True)
+        self.window.geometry('1280x720')
+        self.window.minsize(1280, 720)
+        #self.window.attributes('-fullscreen', True)
         #self.window.resizable(False, False)
         self.window.configure(bg="#FFF9F7")
         self.window.title('Deforestation Detection')
 
+        self.window.grid_rowconfigure(0, weight=1)
+        self.window.grid_columnconfigure(0, weight=1)
+
         style = ttk.Style()
-        style.configure('TFrame', background='white')
+        style.configure('TFrame', background='#FFF9F7')
+
+        # Main frame
+        self.main_frame = tk.Frame(self.window, relief=tk.FLAT)
+        #self.main_frame.propagate(True)
+        self.main_frame.pack(anchor='center', fill='both', expand=True)
+        #self.main_frame.grid(row=0, column=0, sticky='nsew')
+        self.main_frame.grid_columnconfigure(0, weight=1)
+        self.main_frame.grid_rowconfigure(0, weight=0)
+        self.main_frame.grid_rowconfigure(1, weight=1)
 
         # All entries
         self.entries = list()
 
         # Navigation bar
-        self.nav_bar = ttk.Frame(self.window, height=70, relief=tk.FLAT)
+        self.nav_bar = tk.Frame(self.main_frame, height=70, relief=tk.FLAT)
         #self.nav_bar.propagate(True)
         self.InitNavBar()
-        self.nav_bar.grid(column=0, row=0, columnspan=3, sticky="nsew")
+        self.nav_bar.grid(column=0, row=0, columnspan=3, sticky="new")
         self.nav_bar.grid_rowconfigure(0, weight=1)
         self.nav_bar.grid_columnconfigure(0, weight=1)
         self.nav_bar.grid_columnconfigure(1, weight=1)
         self.nav_bar.grid_columnconfigure(2, weight=1)
 
         # Introduction page
-        self.intro_frame = ttk.Frame(self.window, relief=tk.FLAT)
-        #self.intro_frame.propagate(False)
-        #self.intro_frame.grid_propagate(False)
+        self.intro_frame = tk.Frame(self.main_frame, relief=tk.FLAT)
         self.InitIntroPage()
         self.intro_frame.grid(column=0, row=1, sticky="nsew")
         self.intro_frame.grid_rowconfigure(0, weight=1)
-        self.intro_frame.grid_columnconfigure(0, weight=1)
+        # self.intro_frame.grid_columnconfigure(0, weight=1)
         self.intro_frame.grid_columnconfigure(1, weight=1)
         
         
         # Data insertion page
-        self.data_insertion_frame = ttk.Frame(self.window, relief=tk.FLAT)
+        self.data_insertion_frame = tk.Frame(self.main_frame, relief=tk.FLAT)
         #self.data_insertion_frame.propagate(False)
         #self.data_insertion_frame.grid_propagate(False)
         self.InitDataInsertionPage()
         self.data_insertion_frame.grid(column=0, row=1, sticky="nsew")
         self.data_insertion_frame.grid_rowconfigure(0, weight=1)
-        self.data_insertion_frame.grid_columnconfigure(0, weight=1)
-        self.data_insertion_frame.grid_columnconfigure(1, weight=1)
+        self.data_insertion_frame.grid_columnconfigure(0, weight=0)
+        self.data_insertion_frame.grid_columnconfigure(1, weight=0)
         self.data_insertion_frame.grid_columnconfigure(2, weight=1)
 
         # Results page
-        self.results_frame = ttk.Frame(self.window, relief=tk.FLAT)
+        self.results_frame = tk.Frame(self.main_frame, relief=tk.FLAT)
         #self.results_frame.propagate(False)
         #self.results_frame.grid_propagate(False)
         self.InitResultsPage()
         self.results_frame.grid(column=0, row=1, sticky="nsew")
 
-        self.window.grid_rowconfigure(0, weight=1)
-        self.window.grid_rowconfigure(1, weight=1)
-        self.window.grid_columnconfigure(0, weight=1)
+        # self.window.grid_rowconfigure(0, weight=1)
+        # self.window.grid_rowconfigure(1, weight=1)
+        # self.window.grid_columnconfigure(0, weight=1)
 
         
 
@@ -98,7 +109,7 @@ class DeforestationApplication:
         intro_button.config(activeforeground=active_foreground_color)
         intro_button.config(highlightbackground=background_color)
         intro_button.config(highlightcolor=highlight_color)
-        intro_button.grid(column=0, row=0, sticky="ew", padx=(10,10), pady=(5, 5))
+        intro_button.grid(column=0, row=0, sticky="new", padx=(10,10), pady=(5, 5))
 
         # Data button
         data_insertion_button = Button(self.nav_bar, 
@@ -113,7 +124,7 @@ class DeforestationApplication:
         data_insertion_button.config(fg=foreground_color)
         data_insertion_button.config(activebackground=active_background_color)
         data_insertion_button.config(activeforeground=active_foreground_color)
-        data_insertion_button.grid(column=1, row=0, sticky="ew", padx=(10,10), pady=(5, 5))
+        data_insertion_button.grid(column=1, row=0, sticky="new", padx=(10,10), pady=(5, 5))
 
         # Results button
         results_button = Button(self.nav_bar, 
@@ -128,17 +139,17 @@ class DeforestationApplication:
         results_button.config(fg=foreground_color)
         results_button.config(activebackground=active_background_color)
         results_button.config(activeforeground=active_foreground_color)
-        results_button.grid(column=2, row=0, sticky="ew", padx=(10,10), pady=(5, 5))
+        results_button.grid(column=2, row=0, sticky="new", padx=(10,10), pady=(5, 5))
 
 
     def InitIntroPage(self):
         # Side menu frame
-        side_menu = ttk.Frame(self.intro_frame, width=300, relief=tk.FLAT)
-        side_menu.grid_columnconfigure(0, weight=1)
-        side_menu.grid_rowconfigure(0, weight=1)
-        side_menu.grid_rowconfigure(1, weight=1)
-        side_menu.grid_rowconfigure(2, weight=1)
-        side_menu.grid_rowconfigure(3, weight=1)
+        side_menu = tk.Frame(self.intro_frame, width=250, relief=tk.FLAT)
+        # side_menu.grid_columnconfigure(0, weight=1)
+        # side_menu.grid_rowconfigure(0, weight=1)
+        # side_menu.grid_rowconfigure(1, weight=1)
+        # side_menu.grid_rowconfigure(2, weight=1)
+        # side_menu.grid_rowconfigure(3, weight=1)
         #side_menu.propagate(False)
         side_menu.grid(column=0, row=0, sticky="nsew")
 
@@ -152,7 +163,7 @@ class DeforestationApplication:
         # Side menu buttons
         tool_usage_button = Button(side_menu, 
                                    text='How to use the tool', 
-                                   #width=420, 
+                                   #width=230, 
                                    height=70, 
                                    relief='solid',
                                    borderless=1)
@@ -163,12 +174,12 @@ class DeforestationApplication:
         tool_usage_button.config(activeforeground=active_foreground_color)
         tool_usage_button.config(highlightbackground=background_color)
         tool_usage_button.config(highlightcolor=highlight_color)
-        tool_usage_button.grid(column=0, row=0, sticky="ew", padx=(10,10), pady=(10, 20))
+        tool_usage_button.grid(column=0, row=0, sticky="new", padx=(10,10), pady=(5, 5))
 
         # # Data button
         algo_button = Button(side_menu, 
                                    text='Algorithm description', 
-                                   #width=420, 
+                                   #width=230, 
                                    height=70, 
                                    relief='solid',
                                    borderless=1)
@@ -179,12 +190,12 @@ class DeforestationApplication:
         algo_button.config(activeforeground=active_foreground_color)
         algo_button.config(highlightbackground=background_color)
         algo_button.config(highlightcolor=highlight_color)
-        algo_button.grid(column=0, row=1, sticky="ew", padx=(10,10), pady=(0, 20))
+        algo_button.grid(column=0, row=1, sticky="new", padx=(10,10), pady=(5, 5))
 
         # # Results button
         about_button = Button(side_menu, 
                                    text='About', 
-                                   #width=420, 
+                                   #width=230, 
                                    height=70, 
                                    relief='solid',
                                    borderless=1)
@@ -195,11 +206,11 @@ class DeforestationApplication:
         about_button.config(activeforeground=active_foreground_color)
         about_button.config(highlightbackground=background_color)
         about_button.config(highlightcolor=highlight_color)
-        about_button.grid(column=0, row=2, sticky="ew", padx=(10,10), pady=(0, 20))
+        about_button.grid(column=0, row=2, sticky="new", padx=(10,10), pady=(5, 5))
 
         exit_button = Button(side_menu, 
                                    text='Exit', 
-                                   #width=420, 
+                                   #width=230, 
                                    height=70, 
                                    relief='solid',
                                    borderless=1)
@@ -210,7 +221,7 @@ class DeforestationApplication:
         exit_button.config(activeforeground=active_foreground_color)
         exit_button.config(highlightbackground=background_color)
         exit_button.config(highlightcolor=highlight_color)
-        exit_button.grid(column=0, row=3, sticky="ew", padx=(10,10), pady=(10, 10))
+        exit_button.grid(column=0, row=3, sticky="sew", padx=(10,10), pady=(10, 5))
 
         # Text information on the right
         text_info = tk.Text(self.intro_frame, 
@@ -222,7 +233,7 @@ class DeforestationApplication:
                             #height=970)
         )
         text_info.insert("end", "This is editable text.\n", "normal")
-        text_info.grid(column=1, row=0, sticky='nsew', padx=(10,10), pady=(10, 10))
+        text_info.grid(column=1, row=0, sticky='nsew', padx=(10,10), pady=(5, 5))
 
     def InitDataInsertionPage(self):
         # Dates column (left side)
@@ -241,15 +252,16 @@ class DeforestationApplication:
     
     def InitDataInsertionPageThirdColumn(self):
         # 2nd column frame
-        console_frame = ttk.Frame(self.data_insertion_frame, relief=tk.FLAT)
+        console_frame = tk.Frame(self.data_insertion_frame, relief=tk.FLAT)
         console_frame.grid_columnconfigure(0, weight=1)
-        console_frame.grid_rowconfigure(0, weight=1)
+        console_frame.grid_rowconfigure(0, weight=0)
         console_frame.grid_rowconfigure(1, weight=1)
+        console_frame.grid(column=2, row=0, sticky='nsew')
 
         info_label = tk.Label(console_frame, 
                                text="Algorithm progress info:",
                                font=('Arial', 20, 'bold'))
-        info_label.grid(column=0, row=0, sticky="nsew", padx=(10,10), pady=(10,10))
+        info_label.grid(column=0, row=0, sticky="new", padx=(10,10), pady=(10,10))
 
         console_info = tk.Text(console_frame, 
                         wrap='word', 
@@ -260,42 +272,44 @@ class DeforestationApplication:
         console_info.insert("end", "This is editable text.\n", "normal")
         console_info.grid(column=0, row=1, sticky='nsew', padx=(10,10), pady=(10, 10))
 
-        console_frame.grid(column=2, row=0, sticky='nsew')
+        
 
     def InitDataInsertionPageSecondColumn(self):
         # 2nd column frame
-        roi_frame = ttk.Frame(self.data_insertion_frame, relief=tk.FLAT)
+        roi_frame = tk.Frame(self.data_insertion_frame, width=400, relief=tk.FLAT)
+        roi_frame.grid(column=1, row=0, sticky="ns")
         roi_frame.grid_columnconfigure(0, weight=1)
-        roi_frame.grid_rowconfigure(0, weight=1)
-        roi_frame.grid_rowconfigure(1, weight=1)
-        roi_frame.grid_rowconfigure(2, weight=1)
-        roi_frame.grid_rowconfigure(3, weight=1)
-        roi_frame.grid_rowconfigure(4, weight=1)
+        roi_frame.grid_rowconfigure(0, weight=0)
+        roi_frame.grid_rowconfigure(1, weight=0)
+        roi_frame.grid_rowconfigure(2, weight=0)
+        roi_frame.grid_rowconfigure(3, weight=0)
+        roi_frame.grid_rowconfigure(4, weight=0)
         roi_frame.grid_rowconfigure(5, weight=1)
 
-        dates_label = tk.Label(roi_frame, 
+        roi_label = tk.Label(roi_frame, 
                                text="Enter the coordinates \nfor the region of interest:",
                                font=('Arial', 20, 'bold'))
-        dates_label.grid(column=0, row=0, sticky="nsew", padx=(10,10), pady=(10,10))
+        roi_label.grid(column=0, row=0, sticky="new", padx=(10,10), pady=(20,20))
 
         # West frame
-        west_frame = ttk.Frame(roi_frame, relief=tk.FLAT)
+        west_frame = tk.Frame(roi_frame, relief=tk.FLAT)
         west_frame.grid_columnconfigure(0, weight=1)
         west_frame.grid_columnconfigure(1, weight=1)
-        west_frame.grid(column=0, row=1, sticky="nsew")
+        west_frame.grid(column=0, row=1, sticky="new")
 
         west_label = tk.Label(west_frame,
                                    text="West:",
                                    font=('Arial', 18, 'bold'))
-        west_label.grid(column=0, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        west_label.grid(column=0, row=0, sticky="nw", padx=(10,10), pady=(20,20))
         
         west_entry = tk.Entry(west_frame,
-                                   font=('Arial', 18, 'bold'))
-        west_entry.grid(column=1, row=0, sticky="w", padx=(10,10), pady=(10,10))
+                                   font=('Arial', 18, 'bold'),
+                                   width=12)
+        west_entry.grid(column=1, row=0, sticky="new", padx=(10,10), pady=(20,20))
         self.entries.append(west_entry)
 
         # South frame
-        south_frame = ttk.Frame(roi_frame, relief=tk.FLAT)
+        south_frame = tk.Frame(roi_frame, relief=tk.FLAT)
         south_frame.grid_columnconfigure(0, weight=1)
         south_frame.grid_columnconfigure(1, weight=1)
         south_frame.grid(column=0, row=2, sticky="nsew")
@@ -303,15 +317,16 @@ class DeforestationApplication:
         south_label = tk.Label(south_frame,
                                    text="South:",
                                    font=('Arial', 18, 'bold'))
-        south_label.grid(column=0, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        south_label.grid(column=0, row=0, sticky="nw", padx=(10,10), pady=(20,20))
         
         south_entry = tk.Entry(south_frame,
-                                   font=('Arial', 18, 'bold'))
-        south_entry.grid(column=1, row=0, sticky="w", padx=(10,10), pady=(10,10))
+                                   font=('Arial', 18, 'bold'),
+                                   width=12)
+        south_entry.grid(column=1, row=0, sticky="new", padx=(10,10), pady=(20,20))
         self.entries.append(south_entry)
 
         # East frame
-        east_frame = ttk.Frame(roi_frame, relief=tk.FLAT)
+        east_frame = tk.Frame(roi_frame, relief=tk.FLAT)
         east_frame.grid_columnconfigure(0, weight=1)
         east_frame.grid_columnconfigure(1, weight=1)
         east_frame.grid(column=0, row=3, sticky="nsew")
@@ -319,15 +334,16 @@ class DeforestationApplication:
         east_label = tk.Label(east_frame,
                                    text="East:",
                                    font=('Arial', 18, 'bold'))
-        east_label.grid(column=0, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        east_label.grid(column=0, row=0, sticky="nw", padx=(10,10), pady=(20,20))
         
         east_entry = tk.Entry(east_frame,
-                                   font=('Arial', 18, 'bold'))
-        east_entry.grid(column=1, row=0, sticky="w", padx=(10,10), pady=(10,10))
+                                   font=('Arial', 18, 'bold'),
+                                   width=12)
+        east_entry.grid(column=1, row=0, sticky="new", padx=(10,10), pady=(20,20))
         self.entries.append(east_entry)
 
         # North frame
-        north_frame = ttk.Frame(roi_frame, relief=tk.FLAT)
+        north_frame = tk.Frame(roi_frame, relief=tk.FLAT)
         north_frame.grid_columnconfigure(0, weight=1)
         north_frame.grid_columnconfigure(1, weight=1)
         north_frame.grid(column=0, row=4, sticky="nsew")
@@ -335,11 +351,12 @@ class DeforestationApplication:
         north_label = tk.Label(north_frame,
                                    text="North:",
                                    font=('Arial', 18, 'bold'))
-        north_label.grid(column=0, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        north_label.grid(column=0, row=0, sticky="nw", padx=(10,10), pady=(20,20))
         
         north_entry = tk.Entry(north_frame,
-                                   font=('Arial', 18, 'bold'))
-        north_entry.grid(column=1, row=0, sticky="w", padx=(10,10), pady=(10,10))
+                                   font=('Arial', 18, 'bold'),
+                                   width=12)
+        north_entry.grid(column=1, row=0, sticky="new", padx=(10,10), pady=(20,20))
         self.entries.append(north_entry)
 
         # Clear all fields Button
@@ -364,47 +381,45 @@ class DeforestationApplication:
         clear_button.config(activeforeground=active_foreground_color)
         clear_button.config(highlightbackground=background_color)
         clear_button.config(highlightcolor=highlight_color)
-        clear_button.grid(column=0, row=5, sticky="ew", padx=(10,10), pady=(10, 10))
-
-        roi_frame.grid(column=1, row=0, sticky="nsew")
+        clear_button.grid(column=0, row=5, sticky="sew", padx=(10,10), pady=(10, 10))
 
     def ClearAllFields(self):
         for entry in self.entries:
             entry.delete(0, tk.END)
 
-
     def InitDataInsertionPageFirstColumn(self):
         # 1st column frame
-        dates_frame = ttk.Frame(self.data_insertion_frame, relief=tk.FLAT)
+        dates_frame = tk.Frame(self.data_insertion_frame, width=400, relief=tk.FLAT)
         dates_frame.grid_columnconfigure(0, weight=1)
-        dates_frame.grid_rowconfigure(0, weight=1)
-        dates_frame.grid_rowconfigure(1, weight=1)
-        dates_frame.grid_rowconfigure(2, weight=1)
+        dates_frame.grid_rowconfigure(0, weight=0)
+        dates_frame.grid_rowconfigure(1, weight=0)
+        dates_frame.grid_rowconfigure(2, weight=0)
         dates_frame.grid_rowconfigure(3, weight=1)
 
         dates_label = tk.Label(dates_frame, 
                                text="Enter the dates for which \nto observe deforestation:",
                                font=('Arial', 20, 'bold'))
-        dates_label.grid(column=0, row=0, sticky="nsew", padx=(10,10), pady=(10,10))
+        dates_label.grid(column=0, row=0, sticky="new", padx=(10,10), pady=(20,20))
 
         # Date from
         date_from_frame = ttk.Frame(dates_frame, relief=tk.FLAT)
         date_from_frame.grid_columnconfigure(0, weight=1)
         date_from_frame.grid_columnconfigure(1, weight=1)
-        date_from_frame.grid(column=0, row=1, sticky="nsew")
+        date_from_frame.grid(column=0, row=1, sticky="new")
 
         date_from_label = tk.Label(date_from_frame,
                                    text="Date from:\nYYYY-MM-DD",
                                    font=('Arial', 18, 'bold'))
-        date_from_label.grid(column=0, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        date_from_label.grid(column=0, row=0, sticky="w", padx=(10,10), pady=(20,20))
         
         date_from_entry = tk.Entry(date_from_frame,
-                                   font=('Arial', 18, 'bold'))
-        date_from_entry.grid(column=1, row=0, sticky="w", padx=(10,10), pady=(10,10))
+                                   font=('Arial', 18, 'bold'),
+                                   width=12)
+        date_from_entry.grid(column=1, row=0, sticky="w", padx=(10,10), pady=(20,20))
         self.entries.append(date_from_entry)
 
         # Date to
-        date_to_frame = ttk.Frame(dates_frame, relief=tk.FLAT)
+        date_to_frame = tk.Frame(dates_frame, relief=tk.FLAT)
         date_to_frame.grid_columnconfigure(0, weight=1)
         date_to_frame.grid_columnconfigure(1, weight=1)
         date_to_frame.grid(column=0, row=2, sticky="nsew")
@@ -412,11 +427,12 @@ class DeforestationApplication:
         date_to_label = tk.Label(date_to_frame,
                                    text="Date to:\nYYYY-MM-DD",
                                    font=('Arial', 18, 'bold'))
-        date_to_label.grid(column=0, row=0, sticky="w", padx=(10,10), pady=(10,10))
+        date_to_label.grid(column=0, row=0, sticky="w", padx=(10,10), pady=(20,20))
         
         date_to_entry = tk.Entry(date_to_frame,
-                                   font=('Arial', 18, 'bold'))
-        date_to_entry.grid(column=1, row=0, sticky="w", padx=(10,10), pady=(10,10))
+                                   font=('Arial', 18, 'bold'),
+                                   width=12)
+        date_to_entry.grid(column=1, row=0, sticky="w", padx=(10,10), pady=(20,20))
         self.entries.append(date_to_entry)
 
         # Start Button
@@ -440,7 +456,7 @@ class DeforestationApplication:
         start_button.config(activeforeground=active_foreground_color)
         start_button.config(highlightbackground=background_color)
         start_button.config(highlightcolor=highlight_color)
-        start_button.grid(column=0, row=3, sticky="ew", padx=(10,10), pady=(10, 10))
+        start_button.grid(column=0, row=3, sticky="sew", padx=(10,10), pady=(10, 10))
 
         dates_frame.grid(column=0, row=0, sticky="nsew")
 
