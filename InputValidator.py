@@ -4,8 +4,8 @@ import re
 from datetime import datetime
 
 class InputValidator:
-    def __init__(self) -> None:
-        self.data_holder = DataHolder()
+    def __init__(self, data_holder) -> None:
+        self.data_holder = data_holder
         self.roi = dict()
 
     def ValidateInput(self, input_roi, date_from, date_to):

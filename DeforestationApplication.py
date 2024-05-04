@@ -1,4 +1,5 @@
 import tkinter as tk
+import time
 from tkinter import ttk
 
 import matplotlib.pyplot as plt
@@ -9,7 +10,9 @@ import threading
 from tkmacosx import Button
 from tkcalendar import Calendar
 
+from DataHolder import DataHolder
 from InputValidator import InputValidator
+from AlgorithmExecutor import AlgorithmExecutor
 
 # test plotting
 from PIL import Image, ImageTk
@@ -69,6 +72,9 @@ class DeforestationApplication:
         self.results_frame.grid_columnconfigure(0, weight=1)
         self.results_frame.grid_columnconfigure(1, weight=0)
         self.InitResultsPage()
+
+        # Validator variables
+        self.can_validate = True
 
         # Start application
         self.intro_frame.tkraise()
@@ -268,7 +274,6 @@ class DeforestationApplication:
 
         self.results_info.grid(column=0, row=0, sticky='nsew', padx=(10,10), pady=(10, 10))
 
-    
     def InitDataInsertionPageThirdColumn(self):
         # 2nd column frame
         console_frame = tk.Frame(self.data_insertion_frame, relief=tk.FLAT)
@@ -480,8 +485,53 @@ class DeforestationApplication:
         start_button.grid(column=0, row=3, sticky="sew", padx=(10,10), pady=(10, 10))
 
         dates_frame.grid(column=0, row=0, sticky="nsew")
+    
+    def UpdateConsoleInfo(self, text):
+        current_text = self.console_info.cget("text")
+        updated_text = current_text + text
+        self.console_info.config(text=updated_text)
+
+    def InitAlgorithmExecutor(self):
+        alg_ex = AlgorithmExecutor(self.dh)
+        exec_time_str = ""
+
+        self.UpdateConsoleInfo('****************************************************************\n')
+        # Starting downloading data
+        self.UpdateConsoleInfo("-> Data collection has started.\n")
+        start_time = time.time()
+        exec_result = alg_ex.InitCollectData()
+        exec_time = time.time() - start_time
+        exec_time_str = "\t[{:.2f} seconds]\n".format(exec_time)
+        self.UpdateConsoleInfo(exec_result + exec_time_str)
+        self.UpdateConsoleInfo('****************************************************************\n')
+
+        # Reading data
+        self.UpdateConsoleInfo("-> Data reading has started.\n")
+        start_time = time.time()
+        exec_result = alg_ex.InitReadData()
+        self.UpdateConsoleInfo(exec_result)
+        exec_result = alg_ex.InitTransferData()
+        exec_time = time.time() - start_time
+        exec_time_str = "\t[{:.2f} seconds]\n".format(exec_time)
+        self.UpdateConsoleInfo(exec_result + exec_time_str)
+
+        self.UpdateConsoleInfo('****************************************************************\n')
+        # Starting Shadowing Effect Algorithm
+        self.UpdateConsoleInfo("-> Deforestation detection has started.\n")
+        exec_result = alg_ex.InitDeforestationDetection()
+        exec_time = time.time() - start_time
+        exec_time_str = "\t[{:.2f} seconds]\n".format(exec_time)
+        self.UpdateConsoleInfo(exec_result + exec_time_str)
+
+        self.console_info.config(fg='blue')
+        self.UpdateConsoleInfo('****************************************************************\n')
+        self.UpdateConsoleInfo('-> Results and plots are ready.\n')
+        self.UpdateConsoleInfo('****************************************************************\n')
 
     def InitValidator(self):
+        if not self.can_validate:
+            return
+
         # Collect inputs from fields
         date_from = self.entries[0].get()
         date_to = self.entries[1].get()
@@ -490,15 +540,20 @@ class DeforestationApplication:
                     'east': self.entries[4].get(),
                     'north': self.entries[5].get()}
         
-        print(input_roi)
-
-        iv = InputValidator()
+        self.dh = DataHolder()
+        iv = InputValidator(self.dh)
         valid, error_msg = iv.ValidateInput(input_roi, date_from, date_to)
 
         self.console_info.config(text=error_msg)
 
         if valid:
-            print(error_msg)
+            self.can_validate = False
+            self.console_info.config(text="-> Started algorithm execution.\t[Execution time]\n")
+
+            algo_thread = threading.Thread(target=self.InitAlgorithmExecutor)
+            algo_thread.start()
+
         else:
             print(error_msg)
+            self.can_validate = True
 

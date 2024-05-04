@@ -55,6 +55,7 @@ class DataReader:
         for thread in self.threads:
             thread.join()
 
+
     def TransferData(self, data_holder):
         data_holder.asc_images = self.loaded_data[0] + self.loaded_data[1]
         data_holder.desc_images = self.loaded_data[2] + self.loaded_data[3]
