@@ -9,6 +9,8 @@ import threading
 from tkmacosx import Button
 from tkcalendar import Calendar
 
+from InputValidator import InputValidator
+
 # test plotting
 from PIL import Image, ImageTk
 
@@ -23,10 +25,6 @@ class DeforestationApplication:
         self.window.grid_rowconfigure(0, weight=1)
         self.window.grid_columnconfigure(0, weight=1)
 
-
-        style = ttk.Style()
-        style.configure('TFrame', background='#FFF9F7')
-
         # Main frame
         self.main_frame = tk.Frame(self.window, relief=tk.FLAT)
         self.main_frame.pack(anchor='center', fill='both', expand=True)
@@ -39,40 +37,38 @@ class DeforestationApplication:
 
         # Navigation bar
         self.nav_bar = tk.Frame(self.main_frame, height=70, relief=tk.FLAT)
-        self.InitNavBar()
         self.nav_bar.grid(column=0, row=0, columnspan=3, sticky="new")
         self.nav_bar.grid_rowconfigure(0, weight=1)
         self.nav_bar.grid_columnconfigure(0, weight=1)
         self.nav_bar.grid_columnconfigure(1, weight=1)
         self.nav_bar.grid_columnconfigure(2, weight=1)
+        self.InitNavBar()
 
         # Introduction page
         self.intro_frame = tk.Frame(self.main_frame, relief=tk.FLAT)
-        self.InitIntroPage()
         self.intro_frame.grid(column=0, row=1, sticky="nsew")
         self.intro_frame.grid_rowconfigure(0, weight=1)
         self.intro_frame.grid_columnconfigure(1, weight=1)
+        self.InitIntroPage()
         
         
         # Data insertion page
         self.data_insertion_frame = tk.Frame(self.main_frame, relief=tk.FLAT)
-        self.InitDataInsertionPage()
         self.data_insertion_frame.grid(column=0, row=1, sticky="nsew")
         self.data_insertion_frame.grid_rowconfigure(0, weight=1)
         self.data_insertion_frame.grid_columnconfigure(0, weight=0)
         self.data_insertion_frame.grid_columnconfigure(1, weight=0)
         self.data_insertion_frame.grid_columnconfigure(2, weight=1)
+        self.InitDataInsertionPage()
 
         # Results page
         self.results_frame = tk.Frame(self.main_frame, relief=tk.FLAT)
         self.image_canvas = None
-        self.InitResultsPage()
         self.results_frame.grid(column=0, row=1, sticky="nsew")
         self.results_frame.grid_rowconfigure(0, weight=1)
         self.results_frame.grid_columnconfigure(0, weight=1)
         self.results_frame.grid_columnconfigure(1, weight=0)
-        # self.results_frame.grid_columnconfigure(0, weight=1)  # Allow left_frame to resize horizontally
-        # self.results_frame.grid_rowconfigure(0, weight=1) 
+        self.InitResultsPage()
 
         # Start application
         self.intro_frame.tkraise()
@@ -238,6 +234,9 @@ class DeforestationApplication:
         # Console column (right side)
         self.InitDataInsertionPageThirdColumn()
 
+    def InitPlotCanvas(self):
+        pass
+
     def InitResultsPage(self):
         # Left column
         left_frame = tk.Frame(self.results_frame, relief=tk.FLAT)
@@ -250,7 +249,8 @@ class DeforestationApplication:
         self.images_frame = tk.Frame(left_frame, relief=tk.SUNKEN)
         self.images_frame.grid(row=0, column=0, sticky='nsew', padx=(10, 10), pady=(10,10))
         self.images_frame.grid_columnconfigure(0, weight=1)  
-        self.images_frame.grid_rowconfigure(0, weight=1)     
+        self.images_frame.grid_rowconfigure(0, weight=1)
+        self.InitPlotCanvas()
         
         # Right column
         right_frame = tk.Frame(self.results_frame, width=450, relief=tk.FLAT)
@@ -282,16 +282,16 @@ class DeforestationApplication:
                                font=('Arial', 20, 'bold'))
         info_label.grid(column=0, row=0, sticky="new", padx=(10,10), pady=(10,10))
 
-        console_info = tk.Text(console_frame, 
-                        wrap='word', 
-                        font=('Arial', 14), 
-                        state='disabled', 
+        self.info_var = tk.StringVar()
+        self.console_info = tk.Label(console_frame, 
+                        font=('Courier', 24), 
                         bg="lightgrey",
+                        anchor='nw',
+                        fg='#7d0000',
+                        justify='left'
         )
-        console_info.insert("end", "This is editable text.\n", "normal")
-        console_info.grid(column=0, row=1, sticky='nsew', padx=(10,10), pady=(10, 10))
 
-        
+        self.console_info.grid(column=0, row=1, sticky='nsew', padx=(10,10), pady=(10, 10))
 
     def InitDataInsertionPageSecondColumn(self):
         # 2nd column frame
@@ -467,7 +467,9 @@ class DeforestationApplication:
                                    width=300, 
                                    height=70, 
                                    relief='solid',
-                                   borderless=1)
+                                   borderless=1,
+                                   command=self.InitValidator
+                                   )
         start_button.config(font=('Arial', 20, 'bold'))
         start_button.config(bg=background_color)
         start_button.config(fg=foreground_color)
@@ -479,4 +481,24 @@ class DeforestationApplication:
 
         dates_frame.grid(column=0, row=0, sticky="nsew")
 
+    def InitValidator(self):
+        # Collect inputs from fields
+        date_from = self.entries[0].get()
+        date_to = self.entries[1].get()
+        input_roi = {'west': self.entries[2].get(), 
+                    'south': self.entries[3].get(),
+                    'east': self.entries[4].get(),
+                    'north': self.entries[5].get()}
+        
+        print(input_roi)
+
+        iv = InputValidator()
+        valid, error_msg = iv.ValidateInput(input_roi, date_from, date_to)
+
+        self.console_info.config(text=error_msg)
+
+        if valid:
+            print(error_msg)
+        else:
+            print(error_msg)
 

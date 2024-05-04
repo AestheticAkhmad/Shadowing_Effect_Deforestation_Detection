@@ -20,3 +20,10 @@ class DataHolder:
         self.deforested_image_desc = None
         self.deforested_pixels_mask = None
         self.deforested_image_merged = None
+
+        # ROI, dates, image resolution
+        self.roi = None
+        self.date_from = None
+        self.date_to = None
+        self.image_width = 0
+        self.image_height = 0

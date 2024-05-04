@@ -1,5 +1,6 @@
 import openeo
 from datetime import datetime, timedelta
+import os
 
 class DataCollector:
     def __init__(self, roi = None, date_from = "", date_to = "") -> None:
@@ -8,6 +9,7 @@ class DataCollector:
         self.connection.authenticate_oidc()
 
         # File paths for storage
+        self.CreateDataFolder()
         path = "data/"
         self.file_paths = [path + "asc_before.nc", path + "asc_after.nc", path + "desc_before.nc", path + "desc_after.nc"]
 
@@ -16,6 +18,12 @@ class DataCollector:
         self.date_from = date_from
         self.date_to = date_to
         self.datacubes = [None] * 4
+
+    def CreateDataFolder(self):
+        if not os.path.exists("data"):
+            os.makedirs("data")
+        else:
+            print(f"Folder 'data' already exists.")
 
     def GetConvertedDate(self, date, direction = ""):
         if direction == "back":
