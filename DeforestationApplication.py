@@ -2,33 +2,34 @@ import tkinter as tk
 from tkinter import ttk
 
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import threading
 
 from tkmacosx import Button
 from tkcalendar import Calendar
+
+# test plotting
+from PIL import Image, ImageTk
 
 class DeforestationApplication:
     def __init__(self) -> None:
         # Main window
         self.window = tk.Tk()
         self.window.geometry('1280x720')
-        self.window.minsize(1280, 720)
-        #self.window.attributes('-fullscreen', True)
-        #self.window.resizable(False, False)
+        #self.window.minsize(1280, 720)
         self.window.configure(bg="#FFF9F7")
         self.window.title('Deforestation Detection')
-
         self.window.grid_rowconfigure(0, weight=1)
         self.window.grid_columnconfigure(0, weight=1)
+
 
         style = ttk.Style()
         style.configure('TFrame', background='#FFF9F7')
 
         # Main frame
         self.main_frame = tk.Frame(self.window, relief=tk.FLAT)
-        #self.main_frame.propagate(True)
         self.main_frame.pack(anchor='center', fill='both', expand=True)
-        #self.main_frame.grid(row=0, column=0, sticky='nsew')
         self.main_frame.grid_columnconfigure(0, weight=1)
         self.main_frame.grid_rowconfigure(0, weight=0)
         self.main_frame.grid_rowconfigure(1, weight=1)
@@ -38,7 +39,6 @@ class DeforestationApplication:
 
         # Navigation bar
         self.nav_bar = tk.Frame(self.main_frame, height=70, relief=tk.FLAT)
-        #self.nav_bar.propagate(True)
         self.InitNavBar()
         self.nav_bar.grid(column=0, row=0, columnspan=3, sticky="new")
         self.nav_bar.grid_rowconfigure(0, weight=1)
@@ -51,14 +51,11 @@ class DeforestationApplication:
         self.InitIntroPage()
         self.intro_frame.grid(column=0, row=1, sticky="nsew")
         self.intro_frame.grid_rowconfigure(0, weight=1)
-        # self.intro_frame.grid_columnconfigure(0, weight=1)
         self.intro_frame.grid_columnconfigure(1, weight=1)
         
         
         # Data insertion page
         self.data_insertion_frame = tk.Frame(self.main_frame, relief=tk.FLAT)
-        #self.data_insertion_frame.propagate(False)
-        #self.data_insertion_frame.grid_propagate(False)
         self.InitDataInsertionPage()
         self.data_insertion_frame.grid(column=0, row=1, sticky="nsew")
         self.data_insertion_frame.grid_rowconfigure(0, weight=1)
@@ -68,16 +65,14 @@ class DeforestationApplication:
 
         # Results page
         self.results_frame = tk.Frame(self.main_frame, relief=tk.FLAT)
-        #self.results_frame.propagate(False)
-        #self.results_frame.grid_propagate(False)
+        self.image_canvas = None
         self.InitResultsPage()
         self.results_frame.grid(column=0, row=1, sticky="nsew")
-
-        # self.window.grid_rowconfigure(0, weight=1)
-        # self.window.grid_rowconfigure(1, weight=1)
-        # self.window.grid_columnconfigure(0, weight=1)
-
-        
+        self.results_frame.grid_rowconfigure(0, weight=1)
+        self.results_frame.grid_columnconfigure(0, weight=1)
+        self.results_frame.grid_columnconfigure(1, weight=0)
+        # self.results_frame.grid_columnconfigure(0, weight=1)  # Allow left_frame to resize horizontally
+        # self.results_frame.grid_rowconfigure(0, weight=1) 
 
         # Start application
         self.intro_frame.tkraise()
@@ -141,16 +136,14 @@ class DeforestationApplication:
         results_button.config(activeforeground=active_foreground_color)
         results_button.grid(column=2, row=0, sticky="new", padx=(10,10), pady=(5, 5))
 
-
     def InitIntroPage(self):
         # Side menu frame
         side_menu = tk.Frame(self.intro_frame, width=250, relief=tk.FLAT)
-        # side_menu.grid_columnconfigure(0, weight=1)
-        # side_menu.grid_rowconfigure(0, weight=1)
-        # side_menu.grid_rowconfigure(1, weight=1)
-        # side_menu.grid_rowconfigure(2, weight=1)
-        # side_menu.grid_rowconfigure(3, weight=1)
-        #side_menu.propagate(False)
+        side_menu.grid_columnconfigure(0, weight=1)
+        side_menu.grid_rowconfigure(0, weight=0)
+        side_menu.grid_rowconfigure(1, weight=0)
+        side_menu.grid_rowconfigure(2, weight=0)
+        side_menu.grid_rowconfigure(3, weight=1)
         side_menu.grid(column=0, row=0, sticky="nsew")
 
         # Colors
@@ -245,10 +238,36 @@ class DeforestationApplication:
         # Console column (right side)
         self.InitDataInsertionPageThirdColumn()
 
-
-
     def InitResultsPage(self):
-        pass
+        # Left column
+        left_frame = tk.Frame(self.results_frame, relief=tk.FLAT)
+        left_frame.grid_columnconfigure(0, weight=1)
+        left_frame.grid_rowconfigure(0, weight=1)
+        left_frame.grid_rowconfigure(1, weight=0)
+        left_frame.grid(row=0, column=0, sticky='nsew', padx=(10,10), pady=(10,10))
+        
+        # Creating canvas for the result images
+        self.images_frame = tk.Frame(left_frame, relief=tk.SUNKEN)
+        self.images_frame.grid(row=0, column=0, sticky='nsew', padx=(10, 10), pady=(10,10))
+        self.images_frame.grid_columnconfigure(0, weight=1)  
+        self.images_frame.grid_rowconfigure(0, weight=1)     
+        
+        # Right column
+        right_frame = tk.Frame(self.results_frame, width=450, relief=tk.FLAT)
+        right_frame.grid(row=0, column=1, sticky='ns')
+        right_frame.grid_columnconfigure(0, weight=1)
+        right_frame.grid_rowconfigure(0, weight=1)
+        right_frame.grid_propagate(False)
+
+        self.results_info = tk.Text(right_frame, 
+                        wrap='word', 
+                        font=('Arial', 14), 
+                        state='disabled', 
+                        bg="lightgrey",
+        )
+
+        self.results_info.grid(column=0, row=0, sticky='nsew', padx=(10,10), pady=(10, 10))
+
     
     def InitDataInsertionPageThirdColumn(self):
         # 2nd column frame
@@ -459,22 +478,5 @@ class DeforestationApplication:
         start_button.grid(column=0, row=3, sticky="sew", padx=(10,10), pady=(10, 10))
 
         dates_frame.grid(column=0, row=0, sticky="nsew")
-
-    def plot_on_frame(frame):
-        # Create a sample plot
-        fig, ax = plt.subplots()
-        ax.plot([1, 2, 3, 4], [1, 4, 2, 3])
-
-        # Create a FigureCanvasTkAgg instance
-        canvas = FigureCanvasTkAgg(fig, master=frame)
-        canvas.draw()
-
-        # Pack the canvas into the frame
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-    
-
-
-
-
 
 
