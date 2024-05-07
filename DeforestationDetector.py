@@ -13,7 +13,7 @@ class DeforestationDetector:
         mb = np.mean(np.stack(images[:5]), axis=0)
         ma = np.mean(np.stack(images[5:]), axis=0)
 
-        return self.ApplyDenoise(mb), self.ApplyDenoise(ma)
+        return mb, ma
     
     def ConvertToDecibel(self, images):
         threshold = 1e-20

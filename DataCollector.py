@@ -10,7 +10,7 @@ class DataCollector:
 
         # File paths for storage
         self.CreateDataFolder()
-        path = "data/"
+        path = "data1/"
         self.file_paths = [path + "asc_before.nc", path + "asc_after.nc", path + "desc_before.nc", path + "desc_after.nc"]
 
         # Request info

@@ -494,6 +494,7 @@ class DeforestationApplication:
     def InitAlgorithmExecutor(self):
         alg_ex = AlgorithmExecutor(self.dh)
         exec_time_str = ""
+        total_time = None
 
         self.UpdateConsoleInfo('****************************************************************\n')
         # Starting downloading data
@@ -502,6 +503,7 @@ class DeforestationApplication:
         exec_result = alg_ex.InitCollectData()
         exec_time = time.time() - start_time
         exec_time_str = "\t[{:.2f} seconds]\n".format(exec_time)
+        total_time = exec_time
         self.UpdateConsoleInfo(exec_result + exec_time_str)
         self.UpdateConsoleInfo('****************************************************************\n')
 
@@ -513,19 +515,31 @@ class DeforestationApplication:
         exec_result = alg_ex.InitTransferData()
         exec_time = time.time() - start_time
         exec_time_str = "\t[{:.2f} seconds]\n".format(exec_time)
+        total_time += exec_time
         self.UpdateConsoleInfo(exec_result + exec_time_str)
 
         self.UpdateConsoleInfo('****************************************************************\n')
         # Starting Shadowing Effect Algorithm
+        start_time = time.time()
         self.UpdateConsoleInfo("-> Deforestation detection has started.\n")
         exec_result = alg_ex.InitDeforestationDetection()
         exec_time = time.time() - start_time
         exec_time_str = "\t[{:.2f} seconds]\n".format(exec_time)
+        total_time += exec_time
+        self.UpdateConsoleInfo(exec_result + exec_time_str)
+
+        self.UpdateConsoleInfo('****************************************************************\n')
+        # Plotting results
+        start_time = time.time()
+        self.UpdateConsoleInfo("-> Result initialization has started.\n")
+        exec_result = alg_ex.InitResults(self.images_frame, self.results_info)
+        exec_time = time.time() - start_time
+        exec_time_str = "\t[{:.2f} seconds]\n".format(exec_time)
+        total_time += exec_time
         self.UpdateConsoleInfo(exec_result + exec_time_str)
 
         self.console_info.config(fg='blue')
-        self.UpdateConsoleInfo('****************************************************************\n')
-        self.UpdateConsoleInfo('-> Results and plots are ready.\n')
+        self.UpdateConsoleInfo('-> Total time taken: ' + "\t[{:.2f} seconds]\n".format(total_time))
         self.UpdateConsoleInfo('****************************************************************\n')
 
     def InitValidator(self):
