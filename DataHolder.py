@@ -5,6 +5,7 @@ class DataHolder:
         self.asc_images = list()
         self.asc_mean_before = None
         self.asc_mean_after = None
+        self.asc_mean_before_original = None
         self.asc_mean_after_original = None
         self.RCR_asc = None
 
@@ -12,6 +13,7 @@ class DataHolder:
         self.desc_images = list()
         self.desc_mean_before = None
         self.desc_mean_after = None
+        self.desc_mean_before_original = None
         self.desc_mean_after_original = None
         self.RCR_desc = None
 
