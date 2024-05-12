@@ -4,14 +4,15 @@ from skimage import restoration
 
 class DeforestationDetector:
     def __init__(self) -> None:
-        pass
+        self.xb = 5
+        self.xa = 3
 
     def ApplyDenoise(self, images):
         return restoration.denoise_tv_chambolle(images, weight=0.02)
 
     def GetAverageBackscatter(self, images):
-        mb = np.mean(np.stack(images[:5]), axis=0)
-        ma = np.mean(np.stack(images[5:]), axis=0)
+        mb = np.mean(np.stack(images[:self.xb]), axis=0)
+        ma = np.mean(np.stack(images[self.xb:]), axis=0)
 
         return mb, ma
     
@@ -33,7 +34,7 @@ class DeforestationDetector:
     def DoubleBounceBFS(self, x, y, visited, rcr, image):
         q = deque()
         q.append([x, y])
-        t = 3
+        t = 3.35
         area = 0
         to_color = list()
         
@@ -67,7 +68,7 @@ class DeforestationDetector:
     def ShadowBFS(self, x, y, visited, rcr, image):
         q = deque()
         q.append([x, y])
-        t = -3
+        t = -3.35
         area = 0
         to_color = list()
         
@@ -105,14 +106,14 @@ class DeforestationDetector:
 
         for x in range(RCR.shape[0]):
             for y in range(RCR.shape[1]):
-                if visited[x, y] == False and RCR[x, y] < -4.5:
+                if visited[x, y] == False and RCR[x, y] < -4.65:
                     self.ShadowBFS(x, y, visited, RCR, deforestation_image)
 
         visited = np.zeros(RCR.shape, dtype=bool)
 
         for x in range(RCR.shape[0]):
             for y in range(RCR.shape[1]):
-                if visited[x, y] == False and RCR[x, y] > 4.5:
+                if visited[x, y] == False and RCR[x, y] > 4.65:
                     self.DoubleBounceBFS(x, y, visited, RCR, deforestation_image)
 
         return deforestation_image

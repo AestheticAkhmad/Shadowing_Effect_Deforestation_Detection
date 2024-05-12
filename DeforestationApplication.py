@@ -257,6 +257,23 @@ class DeforestationApplication:
         self.images_frame.grid_columnconfigure(0, weight=1)  
         self.images_frame.grid_rowconfigure(0, weight=1)
         self.InitPlotCanvas()
+
+        # Navigations buttons between images
+        # images_nav_bar = tk.Frame(left_frame)
+
+        # show_all_button = Button(images_nav_bar, 
+        #                            text='Algorithm description', 
+        #                            height=70, 
+        #                            relief='solid',
+        #                            borderless=1)
+        # show_all_button.config(font=('Arial', 20, 'bold'))
+        # show_all_button.config(bg=background_color)
+        # show_all_button.config(fg=foreground_color)
+        # show_all_button.config(activebackground=active_background_color)
+        # show_all_button.config(activeforeground=active_foreground_color)
+        # show_all_button.config(highlightbackground=background_color)
+        # show_all_button.config(highlightcolor=highlight_color)
+        # show_all_button.grid(column=0, row=1, sticky="new", padx=(10,10), pady=(5, 5))
         
         # Right column
         right_frame = tk.Frame(self.results_frame, width=450, relief=tk.FLAT)

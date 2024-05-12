@@ -9,8 +9,9 @@ class DataCollector:
         self.connection.authenticate_oidc()
 
         # File paths for storage
-        self.CreateDataFolder()
-        path = "data1/"
+        place = "test_1"
+        self.CreateDataFolder(place)
+        path = place + '/'
         self.file_paths = [path + "asc_before.nc", path + "asc_after.nc", path + "desc_before.nc", path + "desc_after.nc"]
 
         # Request info
@@ -19,9 +20,9 @@ class DataCollector:
         self.date_to = date_to
         self.datacubes = [None] * 4
 
-    def CreateDataFolder(self):
-        if not os.path.exists("data"):
-            os.makedirs("data")
+    def CreateDataFolder(self, folder_name):
+        if not os.path.exists(folder_name):
+            os.makedirs(folder_name)
         else:
             print(f"Folder 'data' already exists.")
 
