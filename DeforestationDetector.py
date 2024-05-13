@@ -34,7 +34,7 @@ class DeforestationDetector:
     def DoubleBounceBFS(self, x, y, visited, rcr, image):
         q = deque()
         q.append([x, y])
-        t = 3.35
+        t = 3
         area = 0
         to_color = list()
         
@@ -68,7 +68,7 @@ class DeforestationDetector:
     def ShadowBFS(self, x, y, visited, rcr, image):
         q = deque()
         q.append([x, y])
-        t = -3.35
+        t = -3
         area = 0
         to_color = list()
         
@@ -106,14 +106,14 @@ class DeforestationDetector:
 
         for x in range(RCR.shape[0]):
             for y in range(RCR.shape[1]):
-                if visited[x, y] == False and RCR[x, y] < -4.65:
+                if visited[x, y] == False and RCR[x, y] < -4.5:
                     self.ShadowBFS(x, y, visited, RCR, deforestation_image)
 
         visited = np.zeros(RCR.shape, dtype=bool)
 
         for x in range(RCR.shape[0]):
             for y in range(RCR.shape[1]):
-                if visited[x, y] == False and RCR[x, y] > 4.65:
+                if visited[x, y] == False and RCR[x, y] > 4.5:
                     self.DoubleBounceBFS(x, y, visited, RCR, deforestation_image)
 
         return deforestation_image

@@ -13,6 +13,7 @@ class DataCollector:
         self.CreateDataFolder(place)
         path = place + '/'
         self.file_paths = [path + "asc_before.nc", path + "asc_after.nc", path + "desc_before.nc", path + "desc_after.nc"]
+        self.final_file_paths = list()
 
         # Request info
         self.roi = roi
@@ -91,4 +92,8 @@ class DataCollector:
 
         for datacube, file_path in zip(self.datacubes, self.file_paths):
             gamma0_datacube = datacube.sar_backscatter(coefficient="gamma0-ellipsoid")
-            gamma0_datacube.download(file_path, format="netCDF")
+            try:
+                gamma0_datacube.download(file_path, format="netCDF")
+                self.final_file_paths.append(file_path)
+            except:
+                continue

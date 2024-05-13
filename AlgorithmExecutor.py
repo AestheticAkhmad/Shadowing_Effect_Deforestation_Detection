@@ -16,11 +16,17 @@ class AlgorithmExecutor:
 
     def InitCollectData(self):
         self.dc = DataCollector(self.data_holder.roi, self.data_holder.date_from, self.data_holder.date_to)
+        
+        print(self.data_holder.roi)
+
         #self.dc.CollectData()
+
         return "-> Data collection is complete."
     
     def InitReadData(self):
-        self.dr = DataReader(self.dc.file_paths)
+        temp_paths = ['test_1/asc_after.nc', 'test_1/desc_after.nc', 'test_1/desc_before.nc']
+        self.dr = DataReader(temp_paths)
+        #self.dr = DataReader(self.dc.final_file_paths)
         self.dr.ReadData()
 
         return "-> Data reading is complete.\n"

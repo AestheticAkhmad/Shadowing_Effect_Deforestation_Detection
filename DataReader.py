@@ -57,17 +57,83 @@ class DataReader:
                 self.orbits[idx] = False
 
     def ReadData(self):
-        if len(self.file_paths) < 4:
+        if len(self.file_paths) < 2:
             return
-
-        for idx, file_path in enumerate(self.file_paths):
-            datacube = xr.open_dataset(file_path)
-            thread = threading.Thread(target=self.LoadData, args=(datacube, idx, self.lock))
-            thread.start()
-            self.threads.append(thread)
         
-        for thread in self.threads:
-            thread.join()
+        asc_before_present = any("asc_before.nc" in file_path for file_path in self.file_paths)
+        asc_after_present = any("asc_after.nc" in file_path for file_path in self.file_paths)
+        both_asc_present = (asc_before_present & asc_after_present)
+
+        if not both_asc_present:
+            self.file_paths = [file_path for file_path in self.file_paths if "asc_before.nc" not in file_path]
+            self.file_paths = [file_path for file_path in self.file_paths if "asc_after.nc" not in file_path]
+
+        desc_before_present = any("desc_before.nc" in file_path for file_path in self.file_paths)
+        desc_after_present = any("desc_after.nc" in file_path for file_path in self.file_paths)
+        both_desc_present = (desc_before_present & desc_after_present)
+
+        if not both_desc_present:
+            self.file_paths = [file_path for file_path in self.file_paths if "desc_before.nc" not in file_path]
+            self.file_paths = [file_path for file_path in self.file_paths if "desc_after.nc" not in file_path]
+        
+        if both_asc_present and both_desc_present:
+            for idx, file_path in enumerate(self.file_paths):
+                datacube = xr.open_dataset(file_path)
+                thread = threading.Thread(target=self.LoadData, args=(datacube, idx, self.lock))
+                thread.start()
+                self.threads.append(thread)
+            
+            for thread in self.threads:
+                thread.join()
+        
+        elif both_asc_present:
+            self.orbits[2] = False
+            self.orbits[3] = False
+
+            idx = 0
+            datacube1 = xr.open_dataset(self.file_paths[0])
+            thread1 = threading.Thread(target=self.LoadData, args=(datacube1, idx, self.lock))
+            thread1.start()
+            self.threads.append(thread1)
+
+            idx = 1
+            datacube2 = xr.open_dataset(self.file_paths[1])
+            thread2 = threading.Thread(target=self.LoadData, args=(datacube2, idx, self.lock))
+            thread2.start()
+            self.threads.append(thread2)
+            
+            for thread in self.threads:
+                thread.join()
+
+        elif both_desc_present:
+            self.orbits[0] = False
+            self.orbits[1] = False
+
+            idx = 0
+            datacube1 = xr.open_dataset(self.file_paths[0])
+            thread1 = threading.Thread(target=self.LoadData, args=(datacube1, idx, self.lock))
+            thread1.start()
+            self.threads.append(thread1)
+
+            idx = 1
+            datacube2 = xr.open_dataset(self.file_paths[1])
+            thread2 = threading.Thread(target=self.LoadData, args=(datacube2, idx, self.lock))
+            thread2.start()
+            self.threads.append(thread2)
+            
+            for thread in self.threads:
+                thread.join()
+        
+            
+
+        # for idx, file_path in enumerate(self.file_paths):
+        #     datacube = xr.open_dataset(file_path)
+        #     thread = threading.Thread(target=self.LoadData, args=(datacube, idx, self.lock))
+        #     thread.start()
+        #     self.threads.append(thread)
+        
+        # for thread in self.threads:
+        #     thread.join()
 
     def IsImageEmpty(self, img, epsilon=1e-5):
         img_without_nan = np.nan_to_num(img)
@@ -80,11 +146,14 @@ class DataReader:
             return False
 
     def TransferData(self, data_holder):
-        if not self.orbits[0] and not self.oribts[1]:
-            data_holder.desc_images = self.loaded_data[2] + self.loaded_data[3]
+        print(self.file_paths)
+        print(self.orbits)
+
+        if not self.orbits[0] or not self.orbits[1]:
+            data_holder.desc_images = self.loaded_data[0] + self.loaded_data[1]
             return "desc"
         
-        elif not self.orbits[2] and not self.oribts[3]:
+        elif not self.orbits[2] or not self.orbits[3]:
             data_holder.asc_images = self.loaded_data[0] + self.loaded_data[1]
             return "asc"
 
