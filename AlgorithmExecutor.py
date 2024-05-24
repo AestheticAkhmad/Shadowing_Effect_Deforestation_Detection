@@ -29,9 +29,11 @@ class AlgorithmExecutor:
         return "-> Data collection is complete."
     
     def InitReadData(self):
-        # temp_paths = ['test_4/asc_before.nc', 'test_4/asc_after.nc', 'test_4/desc_before.nc', 'test_4/desc_after.nc']
-        # self.dr = DataReader(temp_paths, self.polarization)
-        self.dr.ReadData(self.data_holder.file_paths, self.polarization)
+        #temp_paths = ['test_12/asc_before.nc', 'test_12/asc_after.nc', 'test_12/desc_before.nc', 'test_12/desc_after.nc']
+        #temp_paths = ['test_12/desc_before.nc', 'test_12/desc_after.nc']
+        #self.dr = DataReader(temp_paths, self.polarization)
+        self.dr = DataReader(self.dc.file_paths, self.polarization)
+        self.dr.ReadData()
 
         return "-> Data reading is complete.\n"
     
@@ -114,13 +116,14 @@ class AlgorithmExecutor:
         # Deforestation area
         self.data_holder.deforested_pixels = self.dd.CountDeforestedPixels(self.data_holder.deforested_image_merged)
         self.data_holder.deforested_area = self.dd.CalculateDeforestedArea(self.data_holder.deforested_pixels)
+        print("Deforested area: ", self.data_holder.deforested_area)
         
 
         return "-> Deforestation detection is complete."
     
     def InitResults(self, canvas, results_info):
         self.GeneratePlot()
-        #self.SaveDeforestedImage()
+        self.SaveDeforestedImage()
         self.PlotDeforestedImage(canvas)
         self.PlotResultsInfo(results_info)
         #self.GenerateHistogram()
