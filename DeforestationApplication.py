@@ -528,7 +528,7 @@ class DeforestationApplication:
         self.console_info.config(text=updated_text)
 
     def InitAlgorithmExecutor(self):
-        alg_ex = AlgorithmExecutor(self.dh, "VV", "test_4")
+        alg_ex = AlgorithmExecutor(self.dh, "VH", "data")
         exec_time_str = ""
         total_time = None
 

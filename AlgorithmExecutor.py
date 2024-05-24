@@ -24,14 +24,14 @@ class AlgorithmExecutor:
         
         print(self.data_holder.roi)
 
-        #self.dc.CollectData()
+        self.dc.CollectData()
 
         return "-> Data collection is complete."
     
     def InitReadData(self):
-        temp_paths = ['test_4/asc_before.nc', 'test_4/asc_after.nc', 'test_4/desc_before.nc', 'test_4/desc_after.nc']
-        self.dr = DataReader(temp_paths, self.polarization)
-        self.dr.ReadData()
+        # temp_paths = ['test_4/asc_before.nc', 'test_4/asc_after.nc', 'test_4/desc_before.nc', 'test_4/desc_after.nc']
+        # self.dr = DataReader(temp_paths, self.polarization)
+        self.dr.ReadData(self.data_holder.file_paths, self.polarization)
 
         return "-> Data reading is complete.\n"
     
