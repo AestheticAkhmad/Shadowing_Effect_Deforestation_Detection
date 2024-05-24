@@ -9,6 +9,10 @@ class DeforestationDetector:
 
     def ApplyDenoise(self, images):
         return restoration.denoise_tv_chambolle(images, weight=0.02)
+    
+    def NormalizeImage(self, image):
+        #image = np.where(image >= 1.0, 0.9999, image)
+        return image
 
     def GetAverageBackscatter(self, images):
         mb = np.mean(np.stack(images[:self.xb]), axis=0)
@@ -16,13 +20,15 @@ class DeforestationDetector:
 
         return mb, ma
     
-    def ConvertToDecibel(self, images):
-        threshold = 1e-20
-        return np.where((images > threshold), 10 * np.log10(images), 0.0)
+    def ConvertToDecibel(self, image):
+        threshold = 1e-15
+        return np.where((image > threshold), 10 * np.log10(image), 0.0)
 
     def GetRadarChangeRatio(self, mb, ma):
-        RCR = np.where(mb != 0.0, ma / mb, 0.0)
-        return self.ConvertToDecibel(RCR)
+        threshold = 1e-15
+        RCR = np.where(mb > threshold, ma / mb, 0.0)
+        RCR_no_nan_inf = np.nan_to_num(RCR, nan=0.0, posinf=0.0, neginf=0.0)
+        return self.ConvertToDecibel(RCR_no_nan_inf)
     
     def is_valid(self, x, y, rcr):
         if x < 0 or x >= len(rcr):
@@ -34,7 +40,7 @@ class DeforestationDetector:
     def DoubleBounceBFS(self, x, y, visited, rcr, image):
         q = deque()
         q.append([x, y])
-        t = 3
+        t = 3.5
         area = 0
         to_color = list()
         
@@ -48,6 +54,7 @@ class DeforestationDetector:
             if rcr[curr[0], curr[1]] < t:
                 continue
             
+
             to_color.append([curr[0], curr[1]])
             area += 1
 
@@ -68,7 +75,7 @@ class DeforestationDetector:
     def ShadowBFS(self, x, y, visited, rcr, image):
         q = deque()
         q.append([x, y])
-        t = -3
+        t = -3.07
         area = 0
         to_color = list()
         
@@ -114,7 +121,7 @@ class DeforestationDetector:
         for x in range(RCR.shape[0]):
             for y in range(RCR.shape[1]):
                 if visited[x, y] == False and RCR[x, y] > 4.5:
-                    self.DoubleBounceBFS(x, y, visited, RCR, deforestation_image)
+                   self.DoubleBounceBFS(x, y, visited, RCR, deforestation_image)
 
         return deforestation_image
     
@@ -132,3 +139,6 @@ class DeforestationDetector:
     
     def CalculateDeforestedArea(self, deforested_pixels):
         return (deforested_pixels * 100) / 1000000
+    
+    def CalculateMean(self, img1, img2):
+        return (img1 + img2) / 2.0

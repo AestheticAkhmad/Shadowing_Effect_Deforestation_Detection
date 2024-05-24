@@ -3,13 +3,13 @@ from datetime import datetime, timedelta
 import os
 
 class DataCollector:
-    def __init__(self, roi = None, date_from = "", date_to = "") -> None:
+    def __init__(self, roi = None, date_from = "", date_to = "", folder = "") -> None:
         # Conncetion to the OpenEO API
         self.connection = openeo.connect("openeo.dataspace.copernicus.eu")
         self.connection.authenticate_oidc()
 
         # File paths for storage
-        place = "test_1"
+        place = folder
         self.CreateDataFolder(place)
         path = place + '/'
         self.file_paths = [path + "asc_before.nc", path + "asc_after.nc", path + "desc_before.nc", path + "desc_after.nc"]
@@ -46,11 +46,11 @@ class DataCollector:
             "SENTINEL1_GRD",
             spatial_extent= self.roi,
             temporal_extent=[self.GetConvertedDate(self.date_from, "back"), self.date_from],
-            bands=["VV"],
+            bands=["VV", "VH"],
             properties=[
                 openeo.collection_property("sat:orbit_state") == "ascending",
                 openeo.collection_property("sar:instrument_mode") == "IW",
-                openeo.collection_property("sar:pixel_spacing_range") == "10m",
+                openeo.collection_property("sar:pixel_spacing_range") == "10m",                
             ]
         )
 
@@ -58,7 +58,7 @@ class DataCollector:
             "SENTINEL1_GRD",
             spatial_extent= self.roi,
             temporal_extent=[self.date_to, self.GetConvertedDate(self.date_to, "forward")],
-            bands=["VV"],
+            bands=["VV", "VH"],
             properties=[
                 openeo.collection_property("sat:orbit_state") == "ascending",
                 openeo.collection_property("sar:instrument_mode") == "IW",
@@ -70,7 +70,7 @@ class DataCollector:
             "SENTINEL1_GRD",
             spatial_extent= self.roi,
             temporal_extent=[self.GetConvertedDate(self.date_from, "back"), self.date_from],
-            bands=["VV"],
+            bands=["VV", "VH"],
             properties=[
                 openeo.collection_property("sat:orbit_state") == "descending",
                 openeo.collection_property("sar:instrument_mode") == "IW",
@@ -82,7 +82,7 @@ class DataCollector:
             "SENTINEL1_GRD",
             spatial_extent= self.roi,
             temporal_extent=[self.date_to, self.GetConvertedDate(self.date_to, "forward")],
-            bands=["VV"],
+            bands=["VV", "VH"],
             properties=[
                 openeo.collection_property("sat:orbit_state") == "descending",
                 openeo.collection_property("sar:instrument_mode") == "IW",

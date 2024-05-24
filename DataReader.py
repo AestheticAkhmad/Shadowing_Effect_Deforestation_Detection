@@ -4,7 +4,7 @@ import numpy as np
 from DataHolder import DataHolder
 
 class DataReader:
-    def __init__(self, file_paths = list()) -> None:
+    def __init__(self, file_paths = list(), polarization = "VV") -> None:
         # Files to read the images from
         self.file_paths = file_paths
 
@@ -14,7 +14,7 @@ class DataReader:
 
         # Storage for loaded data
         self.loaded_data = [None] * len(file_paths)
-        self.polarization = "VV"
+        self.polarization = polarization
 
         # Available orbits
         self.orbits = [True, True, True, True]
@@ -28,15 +28,15 @@ class DataReader:
         if idx == 0 or idx == 2:
             image_count = 5
             start = len(datacube['t']) - 1
-            print("Datacube length: ", len(datacube['t']))
             stop = -1
             step = -1
         else:
             image_count = 3
             start = 0
             stop = len(datacube['t'])
-            print("Datacube length: ", len(datacube['t']))
             step = 1
+
+        threshold = 1e-10
 
         for i in range(start, stop, step):
             image_np = np.array(band.isel(t=i).values)
@@ -44,7 +44,9 @@ class DataReader:
             if self.IsImageEmpty(image_np):
                 continue
 
-            images.append(image_np)
+            img_without_nan = np.nan_to_num(image_np, nan=threshold, posinf=threshold, neginf=threshold)
+
+            images.append(img_without_nan)
 
             if len(images) >= image_count:
                 full_count = True
@@ -124,20 +126,9 @@ class DataReader:
             for thread in self.threads:
                 thread.join()
         
-            
-
-        # for idx, file_path in enumerate(self.file_paths):
-        #     datacube = xr.open_dataset(file_path)
-        #     thread = threading.Thread(target=self.LoadData, args=(datacube, idx, self.lock))
-        #     thread.start()
-        #     self.threads.append(thread)
-        
-        # for thread in self.threads:
-        #     thread.join()
-
-    def IsImageEmpty(self, img, epsilon=1e-5):
-        img_without_nan = np.nan_to_num(img)
-        num_close_to_zero = np.sum(np.abs(img_without_nan) < epsilon)
+    def IsImageEmpty(self, img, threshold=1e-10):
+        img_without_nan = np.nan_to_num(img, nan=threshold, posinf=threshold, neginf=threshold)
+        num_close_to_zero = np.sum(np.abs(img_without_nan) < threshold)
         ratio = num_close_to_zero / img.size
 
         if num_close_to_zero / img.size > 0.3:

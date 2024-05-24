@@ -22,7 +22,6 @@ class DeforestationApplication:
         # Main window
         self.window = tk.Tk()
         self.window.geometry('1280x720')
-        #self.window.minsize(1280, 720)
         self.window.configure(bg="#FFF9F7")
         self.window.title('Deforestation Detection')
         self.window.grid_rowconfigure(0, weight=1)
@@ -219,15 +218,24 @@ class DeforestationApplication:
         exit_button.grid(column=0, row=3, sticky="sew", padx=(10,10), pady=(10, 5))
 
         # Text information on the right
-        text_info = tk.Text(self.intro_frame, 
-                            wrap='word', 
-                            font=('Arial', 14), 
-                            state='disabled', 
-                            bg="lightgrey",
-                            #width=1420,
-                            #height=970)
+        text_info = tk.Label(self.intro_frame, 
+                                    font=('Arial', 28), 
+                                    bg="lightgrey",
+                                    anchor='nw',
+                                    fg='#333d36',
+                                    justify='left'
         )
-        text_info.insert("end", "This is editable text.\n", "normal")
+
+        info = "To use this tool, follow these instructions:\n"
+        info += "1. Click the 'Data Insertion' button on the top middle.\n"
+        info += "2. Enter the dates you want to detect deforestation on.\n"
+        info += "3. Enter the region of interest.\n"
+        info += "4. Press 'Start' button to execute the algorithm.\n"
+        info += "5. After the console states that results are redy, press 'Results' button.\n\n"
+        info += "The plot is automaticall saved on your machine in folder 'data'\n"
+
+        text_info.config(text=info)
+
         text_info.grid(column=1, row=0, sticky='nsew', padx=(10,10), pady=(5, 5))
 
     def InitDataInsertionPage(self):
@@ -239,57 +247,68 @@ class DeforestationApplication:
 
         # Console column (right side)
         self.InitDataInsertionPageThirdColumn()
-
-    def InitPlotCanvas(self):
-        pass
+    
+    def resize_canvas(self, event):
+        self.canvas_width = event.width
+        self.canvas_height = event.height
+        self.canvas.config(width=self.canvas_width, height=self.canvas_height)
 
     def InitResultsPage(self):
         # Left column
         left_frame = tk.Frame(self.results_frame, relief=tk.FLAT)
         left_frame.grid_columnconfigure(0, weight=1)
         left_frame.grid_rowconfigure(0, weight=1)
-        left_frame.grid_rowconfigure(1, weight=0)
+        left_frame.grid_rowconfigure(1, weight=1)
         left_frame.grid(row=0, column=0, sticky='nsew', padx=(10,10), pady=(10,10))
+
+        image_label = tk.Label(left_frame, 
+                        text="Deforestation detection plot:",
+                        font=('Arial', 20, 'bold'))
+        image_label.grid(column=0, row=0, sticky="new", padx=(10,10), pady=(10,10))
         
         # Creating canvas for the result images
-        self.images_frame = tk.Frame(left_frame, relief=tk.SUNKEN)
-        self.images_frame.grid(row=0, column=0, sticky='nsew', padx=(10, 10), pady=(10,10))
-        self.images_frame.grid_columnconfigure(0, weight=1)  
-        self.images_frame.grid_rowconfigure(0, weight=1)
-        self.InitPlotCanvas()
+        self.image_frame = tk.Frame(left_frame, relief=tk.SUNKEN)
+        self.image_frame.grid(row=1, column=0, sticky='nsew', padx=(10, 10), pady=(10,10))
+        self.image_frame.grid_columnconfigure(0, weight=1)  
+        self.image_frame.grid_rowconfigure(0, weight=1)
 
-        # Navigations buttons between images
-        # images_nav_bar = tk.Frame(left_frame)
+        # Canvas
+        self.canvas = tk.Canvas(self.image_frame, width=800, height=600)
+        self.canvas.grid(row=0, column=0, sticky="nsew")
 
-        # show_all_button = Button(images_nav_bar, 
-        #                            text='Algorithm description', 
-        #                            height=70, 
-        #                            relief='solid',
-        #                            borderless=1)
-        # show_all_button.config(font=('Arial', 20, 'bold'))
-        # show_all_button.config(bg=background_color)
-        # show_all_button.config(fg=foreground_color)
-        # show_all_button.config(activebackground=active_background_color)
-        # show_all_button.config(activeforeground=active_foreground_color)
-        # show_all_button.config(highlightbackground=background_color)
-        # show_all_button.config(highlightcolor=highlight_color)
-        # show_all_button.grid(column=0, row=1, sticky="new", padx=(10,10), pady=(5, 5))
-        
+        # Create vertical and horizontal scrollbars
+        v_scrollbar = tk.Scrollbar(self.image_frame, orient=tk.VERTICAL, command=self.canvas.yview)
+        h_scrollbar = tk.Scrollbar(self.image_frame, orient=tk.HORIZONTAL, command=self.canvas.xview)
+        self.canvas.config(yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set)
+        self.canvas.bind("<Configure>", self.resize_canvas)
+
+        # Grid the scrollbars to the frame
+        v_scrollbar.grid(row=0, column=1, sticky='ns')
+        h_scrollbar.grid(row=1, column=0, sticky='ew')
+
+                
         # Right column
         right_frame = tk.Frame(self.results_frame, width=450, relief=tk.FLAT)
-        right_frame.grid(row=0, column=1, sticky='ns')
+        right_frame.grid(row=0, column=1, sticky='nsew')
         right_frame.grid_columnconfigure(0, weight=1)
-        right_frame.grid_rowconfigure(0, weight=1)
+        right_frame.grid_rowconfigure(0, weight=0)
+        right_frame.grid_rowconfigure(1, weight=1)
         right_frame.grid_propagate(False)
 
-        self.results_info = tk.Text(right_frame, 
-                        wrap='word', 
-                        font=('Arial', 14), 
-                        state='disabled', 
-                        bg="lightgrey",
+        info_label = tk.Label(right_frame, 
+                            text="Results:",
+                            font=('Arial', 20, 'bold'))
+        info_label.grid(column=0, row=0, sticky="new", padx=(10,10), pady=(10,10))
+
+        self.results_info = tk.Label(right_frame, 
+                font=('Courier', 24, 'bold'), 
+                bg="lightgrey",
+                anchor='nw',
+                fg='#7d0000',
+                justify='left'
         )
 
-        self.results_info.grid(column=0, row=0, sticky='nsew', padx=(10,10), pady=(10, 10))
+        self.results_info.grid(column=0, row=1, sticky='nsew', padx=(10,10), pady=(10, 10))
 
     def InitDataInsertionPageThirdColumn(self):
         # 2nd column frame
@@ -509,7 +528,7 @@ class DeforestationApplication:
         self.console_info.config(text=updated_text)
 
     def InitAlgorithmExecutor(self):
-        alg_ex = AlgorithmExecutor(self.dh)
+        alg_ex = AlgorithmExecutor(self.dh, "VV", "test_4")
         exec_time_str = ""
         total_time = None
 
@@ -549,7 +568,7 @@ class DeforestationApplication:
         # Plotting results
         start_time = time.time()
         self.UpdateConsoleInfo("-> Result initialization has started.\n")
-        exec_result = alg_ex.InitResults(self.images_frame, self.results_info)
+        exec_result = alg_ex.InitResults(self.canvas, self.results_info)
         exec_time = time.time() - start_time
         exec_time_str = "\t[{:.2f} seconds]\n".format(exec_time)
         total_time += exec_time
@@ -561,6 +580,7 @@ class DeforestationApplication:
 
     def InitValidator(self):
         if not self.can_validate:
+            print("cannot start algorithm yet")
             return
 
         # Collect inputs from fields
@@ -581,10 +601,18 @@ class DeforestationApplication:
             self.can_validate = False
             self.console_info.config(text="-> Started algorithm execution.\t[Execution time]\n")
 
-            algo_thread = threading.Thread(target=self.InitAlgorithmExecutor)
-            algo_thread.start()
+            self.algo_thread = threading.Thread(target=self.InitAlgorithmExecutor)
+            self.algo_thread.start()
+            self.check_thread()
 
         else:
             print(error_msg)
+            self.can_validate = True
+
+    def check_thread(self):
+        if self.algo_thread.is_alive():
+            self.window.after(100, self.check_thread)
+        else:
+            print("can start algorithm")
             self.can_validate = True
 
