@@ -5,6 +5,10 @@ Paper source: https://www.mdpi.com/2072-4292/10/8/1250
 
 ## Accuracy of the algorithm is around 73%
 
+## Install dependencies before using
+1. Go to the project folder
+2. In terminal run: pip install -r requirements.txt
+
 ## How to run:
 1. Download as zip
 2. Exctract all files
