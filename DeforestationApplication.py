@@ -8,7 +8,6 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import threading
 
 from tkmacosx import Button
-from tkcalendar import Calendar
 
 from DataHolder import DataHolder
 from InputValidator import InputValidator
