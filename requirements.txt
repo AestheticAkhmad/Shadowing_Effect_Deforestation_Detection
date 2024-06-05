@@ -1,13 +1,7 @@
-time
 matplotlib
-threading
 tkmacosx
-PIL
+Pillow
 numpy
 imageio
-skimage
-collections
-os
-datetime
+scikit-image
 xarray
-openeo
